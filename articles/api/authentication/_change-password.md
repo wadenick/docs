@@ -60,7 +60,7 @@ This endpoint only works for database connections.
 
 | Parameter        | Description |
 |:-----------------|:------------|
-| `client_id` | The `client_id` of your client. We strongly recommend including a Client ID so that the email template knows from which client the request was triggered. |
+| `client_id` | The `client_id` of your client. We strongly recommend including a Client ID. That way the email template will know from which client the request was triggered, and if the [Application Login URI](universal-login/default-login-url) is set, the New Universal Login experience will render a button to let the user go back to the application. |
 | `email` <br/><span class="label label-danger">Required</span> | The user's email address. |
 | `connection` <br/><span class="label label-danger">Required</span> | The name of the database connection configured to your client. |
 
