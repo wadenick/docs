@@ -151,14 +151,14 @@ function(user, context, callback) {
         authorize_again: url.format({
           protocol: 'https',
           hostname: auth0.domain,
-          pathname: '/authorize',
+          pathname: '/authorize',f
           query: req.query
         })
       }
     );
 
     context.redirect = {
-      url: `https://example.com/change-pw?token=${token}`
+      url: `<%= "https://example.com/change-pw?token=${token}"%>`
     };
   }
 
