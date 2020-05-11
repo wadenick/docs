@@ -11,14 +11,19 @@ useCase:
 ---
 # Configuring a Custom SMS Provider for MFA using Twilio
 
-Auth0 has built-in support for sending messages through Twilio. However, you could want to add specific logic before sending a message, or want to send a different message dependent upon the user or the application. If that is the case, you can configure SMS MFA to use a Send Phone Message Hook.
+Twilio provides two APIs for sending SMS messages:
+
+  - [Programmable SMS](https://www.twilio.com/sms) is a flexible API designed to fully automate SMS communications.
+  - [Verify](https://www.twilio.com/verify) is an API designed to send one-time codes while hides the complexity of SMS delivery. 
+
+Auth0 has built-in support for sending messages through Twilio using the Twilio Programmable SMS API. If you want to write your own custom logic for using that API, or you want to use Twilio Verify, you can configure SMS to use a Phone Message Hook.
 
 ## Prerequisites
 
 Before you begin this tutorial, please:
 
 * Sign up for a [Twilio](https://www.twilio.com/try-twilio) account.
-* Create a [new Messaging Service](https://www.twilio.com/console/sms/services).
+* Create a new Messaging Service in the [Programmable SMS console](https://www.twilio.com/console/sms/services) or in the [Verify console](https://www.twilio.com/console/verify/services) depending on the API you want to use.
 * Add a phone number that is enabled for SMS to your service and capture the number.
 * Capture the Account SID and Authorization Token by clicking *Show API Credentials* in the [Twilio SMS Dashboard](https://www.twilio.com/console/sms/dashboard)
 
@@ -36,7 +41,7 @@ Add three [Hook Secrets](/hooks/secrets/create) with key = `TWILIO_ACCOUNT_SID`,
 
 ## 3. Implement the Hook
 
-[Edit](/hooks/update) the Send Phone Message hook code to match the example below.
+If you want to use the Programmable SMS API, [edit](/hooks/update) the Send Phone Message hook code to match the example below.
 
 ```js
 /**
@@ -66,7 +71,7 @@ module.exports = function(recipient, text, context, cb) {
  
   client.messages 
       .create({ 
-         body: text + context.client_id, 
+         body: text, 
          from: fromPhoneNumber,       
          to: recipient 
       }) 
@@ -78,6 +83,35 @@ module.exports = function(recipient, text, context, cb) {
       });
 };
 
+```
+
+If you want to use the Verify API, you need to make sure that the Twilio Verify Service is configured to accept a custom code. At the time of writing, you need to contact Twilio support to get it enabled. 
+
+[Edit](/hooks/update) the Send Phone Message hook code to match the example below.
+
+```js
+module.exports = function(recipient, text, context, cb) {
+
+  const accountSid = context.webtask.secrets.TWILIO_ACCOUNT_SID; 
+  const authToken = context.webtask.secrets.TWILIO_AUTH_TOKEN; 
+  const fromPhoneNumber = context.webtask.secrets.TWILIO_PHONE_NUMBER;
+
+  const client = require('twilio')(accountSid, authToken); 
+ 
+  client.verify.services(accountSid)
+      .verifications
+      .create({
+        to: recipient,
+        channel: 'sms',
+        customCode: context.code
+      })
+      .then(function() {
+        cb(null, {});
+      }) 
+      .catch(function(err) {
+        cb(err);
+      });
+};
 ```
 
 ## 4. Add the Twilio Node JS Helper NPM package
