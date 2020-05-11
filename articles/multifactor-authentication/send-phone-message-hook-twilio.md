@@ -14,7 +14,7 @@ useCase:
 Twilio provides two APIs for sending SMS messages:
 
   - [Programmable SMS](https://www.twilio.com/sms) is a flexible API designed to fully automate SMS communications.
-  - [Verify](https://www.twilio.com/verify) is an API designed to send one-time codes while hides the complexity of SMS delivery. 
+  - [Verify](https://www.twilio.com/verify) is an API designed to send one-time codes. It simplifies SMS delivery by not requiring you to configure phone numbers or short-codes to deliver messages.
 
 Auth0 has built-in support for sending messages through Twilio using the Twilio Programmable SMS API. If you want to write your own custom logic for using that API, or you want to use Twilio Verify, you can configure SMS to use a Phone Message Hook.
 
@@ -24,7 +24,7 @@ Before you begin this tutorial, please:
 
 * Sign up for a [Twilio](https://www.twilio.com/try-twilio) account.
 * Create a new Messaging Service in the [Programmable SMS console](https://www.twilio.com/console/sms/services) or in the [Verify console](https://www.twilio.com/console/verify/services) depending on the API you want to use.
-* Add a phone number that is enabled for SMS to your service and capture the number.
+* If you use Programmable SMS, you need to add a phone number that is enabled for SMS to your service and capture the number.
 * Capture the Account SID and Authorization Token by clicking *Show API Credentials* in the [Twilio SMS Dashboard](https://www.twilio.com/console/sms/dashboard)
 
 ## 1. Create a Send Phone Message hook 
